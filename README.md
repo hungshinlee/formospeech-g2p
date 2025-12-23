@@ -1,133 +1,133 @@
-# FormoG2P
+# FormoSpeech G2P
 
-台灣本土語言文字轉音素 (Grapheme-to-Phoneme) 工具
+Grapheme-to-Phoneme (G2P) Toolkit for Formosan Languages
 
-Formosan Languages Grapheme-to-Phoneme Toolkit
+[繁體中文](README_zh-TW.md)
 
-## 功能特色
+## Features
 
-- **G2P 轉換**：將文字轉換為 IPA 或拼音發音序列
-- **智慧斷詞**：使用 Jieba 搭配各腔調專屬詞典
-- **異體字正規化**：自動將異體字轉換為標準字
-- **中英混合支援**：可選擇性加入英文發音
-- **擴展漢字支援**：完整支援臺客語常用的 CJK 擴展字集與私用區造字
-- **未知詞彙回報**：自動識別並回報不在詞典中的詞彙
+- **G2P Conversion**: Convert text to IPA or Pinyin pronunciation sequences
+- **Smart Tokenization**: Jieba-based segmentation with dialect-specific dictionaries
+- **Variant Character Normalization**: Automatic conversion of variant characters to standard forms
+- **Mixed Chinese-English Support**: Optional English pronunciation integration
+- **Extended CJK Support**: Full support for CJK Extension B–H and Private Use Area characters commonly used in Taiwanese languages
+- **Unknown Word Detection**: Automatic identification and reporting of out-of-vocabulary words
 
-### 支援的客語腔調
+### Supported Hakka Dialects
 
-- 客語_四縣
-- 客語_南四縣
-- 客語_海陸
-- 客語_大埔
-- 客語_饒平
-- 客語_詔安
+- Sixian (四縣)
+- Southern Sixian (南四縣)
+- Hailu (海陸)
+- Dapu (大埔)
+- Raoping (饒平)
+- Zhao'an (詔安)
 
-## 安裝
+## Installation
 
 ```bash
-# 使用 uv
+# Using uv
 uv sync
 
-# 或使用 pip
+# Or using pip
 pip install -e .
 ```
 
-## 快速開始
+## Quick Start
 
 ```python
 from hakka import g2p
 
-# 基本 G2P 轉換
+# Basic G2P conversion
 result = g2p("天公落水", "客語_四縣", "ipa")
 print(result.pronunciations)
 # ['tʰ-ien_24 k-uŋ_24', 'l-ok_5 s-ui_31']
 
-# 檢查是否有未知詞彙
+# Check for unknown words
 if result.has_unknown:
-    print(f"未知詞彙: {result.unknown_words}")
+    print(f"Unknown words: {result.unknown_words}")
 ```
 
-## 使用方式
+## Usage
 
-### G2P 轉換
+### G2P Conversion
 
 ```python
 from hakka import g2p, g2p_simple, g2p_string, batch_g2p
 
-# 完整 G2P（回傳 G2PResult 物件）
+# Full G2P (returns G2PResult object)
 result = g2p("天公落水，好靚！", "客語_四縣", "ipa")
-result.pronunciations  # 發音序列
-result.unknown_words   # 未知詞彙列表
-result.details         # 詳細的詞彙與發音對應
-result.has_unknown     # 是否有未知詞彙
+result.pronunciations  # Pronunciation sequence
+result.unknown_words   # List of unknown words
+result.details         # Detailed word-pronunciation mapping
+result.has_unknown     # Whether unknown words exist
 
-# 簡化版（只回傳發音列表）
+# Simplified version (returns pronunciation list only)
 prons = g2p_simple("天公落水", "客語_四縣", "ipa")
 # ['tʰ-ien_24 k-uŋ_24', 'l-ok_5 s-ui_31']
 
-# 字串版（回傳合併的發音字串）
+# String version (returns concatenated pronunciation string)
 pron_str = g2p_string("天公落水", "客語_四縣", "ipa")
 # 'tʰ-ien_24 k-uŋ_24 l-ok_5 s-ui_31'
 
-# 批次處理
+# Batch processing
 results = batch_g2p(["天公落水", "日頭落山"], "客語_四縣", "ipa")
 ```
 
-### G2P 參數說明
+### G2P Parameters
 
 ```python
 result = g2p(
-    text,                          # 輸入文字
-    dialect="客語_四縣",            # 腔調名稱
-    pronunciation_type="ipa",      # 發音格式: "ipa" 或 "pinyin"
-    unknown_token=None,            # 未知詞彙的替代符號
-    keep_unknown=True,             # 是否保留未知詞彙
-    use_variant_map=True,          # 是否套用異體字轉換
-    include_english=False,         # 是否包含英文發音
+    text,                          # Input text
+    dialect="客語_四縣",            # Dialect name
+    pronunciation_type="ipa",      # Pronunciation format: "ipa" or "pinyin"
+    unknown_token=None,            # Replacement token for unknown words
+    keep_unknown=True,             # Whether to keep unknown words in output
+    use_variant_map=True,          # Whether to apply variant character conversion
+    include_english=False,         # Whether to include English pronunciations
 )
 ```
 
-### 中英混合 G2P
+### Mixed Chinese-English G2P
 
 ```python
 from hakka import g2p
 
-# 啟用英文發音（僅支援 IPA）
+# Enable English pronunciation (IPA only)
 result = g2p("天公落水Hello World", "客語_四縣", "ipa", include_english=True)
 print(result.pronunciations)
 # ['tʰ-ien_24 k-uŋ_24', 'l-ok_5 s-ui_31', 'h ə l oʊ', 'w ɝ l d']
 
-# 不啟用英文（英文會被視為未知詞彙）
+# Without English (English words treated as unknown)
 result = g2p("天公落水Hello", "客語_四縣", "ipa", include_english=False)
 print(result.unknown_words)
 # ['Hello']
 ```
 
-### 文本正規化
+### Text Normalization
 
 ```python
 from hakka import normalize, apply_variant_map
 
-# 完整正規化（包含異體字轉換）
-normalize("天公落水!")           # '天公落水！'（半形轉全形）
-normalize("台灣真好")            # '臺灣真好'（異體字轉換）
-normalize("Hello", include_english=True)  # 'HELLO'（轉大寫）
+# Full normalization (including variant character conversion)
+normalize("天公落水!")           # '天公落水！' (half-width to full-width)
+normalize("台灣真好")            # '臺灣真好' (variant character conversion)
+normalize("Hello", include_english=True)  # 'HELLO' (uppercase conversion)
 
-# 單獨套用異體字轉換
+# Apply variant character conversion only
 apply_variant_map("台灣")        # '臺灣'
 apply_variant_map("温泉")        # '溫泉'
 ```
 
-正規化處理項目：
-1. Unicode NFKC 正規化（全形轉半形）
-2. 半形標點轉全形（`, ? ! .` → `，？！。`）
-3. 移除不需要的標點（保留 `，。？！`）
-4. 異體字轉換（可選）
-5. 英文轉大寫（可選）
+Normalization processing steps:
+1. Unicode NFKC normalization (full-width to half-width)
+2. Half-width punctuation to full-width (`, ? ! .` → `，？！。`)
+3. Remove unnecessary punctuation (keep `，。？！`)
+4. Variant character conversion (optional)
+5. Uppercase conversion for English (optional)
 
-### 標點符號處理
+### Punctuation Handling
 
-標點符號 `，。？！` 會被視為 known token，直接輸出：
+Punctuation marks `，。？！` are treated as known tokens and output directly:
 
 ```python
 result = g2p("天公落水，好靚！", "客語_四縣", "ipa")
@@ -135,217 +135,218 @@ print(result.pronunciations)
 # ['tʰ-ien_24 k-uŋ_24', 'l-ok_5 s-ui_31', '，', '好靚', '！']
 ```
 
-### 基本斷詞
+### Basic Tokenization
 
 ```python
 from hakka import run_jieba, run_jieba_all_dialects
 
-# 使用指定腔調斷詞
+# Tokenize with specific dialect
 words = run_jieba("天公落水", "客語_四縣")
 # ['天公', '落水']
 
-# 包含英文詞典
+# Include English dictionary
 words = run_jieba("天公落水ABC", "客語_四縣", include_english=True)
 # ['天公', '落水', 'ABC']
 
-# 使用所有腔調斷詞
+# Tokenize with all dialects
 results = run_jieba_all_dialects("天公落水")
 ```
 
-### 發音查詢
+### Pronunciation Lookup
 
 ```python
 from hakka import get_pronunciation, get_pronunciation_all_dialects
 
-# 查詢單一詞彙發音
+# Query pronunciation for a single word
 pron = get_pronunciation("天公", "客語_四縣", "ipa")
 # ['tʰ-ien_24 k-uŋ_24']
 
-# 查詢所有腔調發音
+# Query pronunciation across all dialects
 all_prons = get_pronunciation_all_dialects("天公", "ipa")
 ```
 
-### 英文發音查詢
+### English Pronunciation Lookup
 
 ```python
 from hakka import get_english_pronunciation, english_word_exists, get_english_lexicon_stats
 
-# 查詢英文發音（會自動轉大寫）
+# Query English pronunciation (auto-converts to uppercase)
 get_english_pronunciation("hello")
 # ['h ə l oʊ', 'h ɛ l oʊ']
 
-# 檢查英文詞彙是否存在
+# Check if English word exists
 english_word_exists("hello")  # True
 
-# 英文詞典統計
+# English dictionary statistics
 get_english_lexicon_stats()
 # {'total_words': 126282, 'max_word_length': ...}
 ```
 
-### 詞彙檢查
+### Vocabulary Check
 
 ```python
 from hakka import word_exists, find_unknown_words
 
-# 檢查詞彙是否存在
+# Check if word exists
 word_exists("天公", "客語_四縣")  # True
 
-# 找出未知詞彙
+# Find unknown words
 unknown = find_unknown_words("天公落水ABC", "客語_四縣")
 # ['ABC']
 
-# 包含英文詞典檢查
+# Include English dictionary check
 unknown = find_unknown_words("天公落水ABC", "客語_四縣", include_english=True)
-# []（ABC 在英文詞典中）
+# [] (ABC exists in English dictionary)
 ```
 
-### 腔調比較
+### Dialect Comparison
 
 ```python
 from hakka import compare_dialects, find_common_words, find_unique_words
 
-# 比較同一詞彙在不同腔調的發音
+# Compare pronunciation of the same word across dialects
 comparison = compare_dialects("天公")
 # {'客語_四縣': {'ipa': [...], 'pinyin': [...]}, ...}
 
-# 找出多個腔調共有的詞彙
+# Find words common to multiple dialects
 common = find_common_words("客語_四縣", "客語_海陸")
 
-# 找出某腔調獨有的詞彙
+# Find words unique to a specific dialect
 unique = find_unique_words("客語_四縣")
 ```
 
-### 字典統計
+### Dictionary Statistics
 
 ```python
 from hakka import get_lexicon_stats, get_all_lexicon_stats
 
-# 單一腔調統計
+# Single dialect statistics
 stats = get_lexicon_stats("客語_四縣")
 # {'total_words': 91281, 'max_word_length': ..., ...}
 
-# 所有腔調統計
+# All dialects statistics
 all_stats = get_all_lexicon_stats()
 ```
 
-### Tokenizer 快取管理
+### Tokenizer Cache Management
 
-Tokenizer 會在第一次呼叫時載入並快取，之後的呼叫不會重複載入：
+Tokenizers are loaded and cached on first invocation; subsequent calls retrieve from cache:
 
 ```python
 from hakka import get_cached_tokenizers, clear_tokenizer_cache
 
-# 查看已快取的 Tokenizer
+# View cached tokenizers
 get_cached_tokenizers()
 # ['客語_四縣', '客語_四縣_en', '客語_海陸', ...]
 
-# 清除快取（如需重新載入詞典）
+# Clear cache (if dictionary reload is needed)
 clear_tokenizer_cache()
 ```
 
-## Unicode 支援範圍
+## Unicode Support
 
-完整支援臺客語常用的擴展字集：
+Full support for extended character sets commonly used in Taiwanese languages:
 
-| 範圍 | 說明 |
-|------|------|
-| `U+2E80-U+9FFF` | CJK 部首、基本漢字 |
-| `U+F900-U+FAFF` | CJK 相容漢字 |
-| `U+20000-U+323AF` | CJK 擴展 B ~ H（臺客語常用外字） |
-| `U+E000-U+F8FF` | 私用區 (PUA) |
-| `U+F0000-U+10FFFD` | 私用區補充 A & B（臺客語造字） |
+| Range | Description |
+|-------|-------------|
+| `U+2E80-U+9FFF` | CJK Radicals, Basic CJK |
+| `U+F900-U+FAFF` | CJK Compatibility Ideographs |
+| `U+20000-U+323AF` | CJK Extension B–H (Taiwanese language characters) |
+| `U+E000-U+F8FF` | Private Use Area (PUA) |
+| `U+F0000-U+10FFFD` | Supplementary Private Use Areas A & B (custom characters) |
 
-## API 參考
+## API Reference
 
-### G2P 功能
+### G2P Functions
 
-| 函數 | 說明 |
-|------|------|
-| `g2p(text, dialect, type, ...)` | 完整 G2P 轉換，回傳 G2PResult |
-| `g2p_simple(text, dialect, type, ...)` | 簡化版，只回傳發音列表 |
-| `g2p_string(text, dialect, type, ...)` | 回傳合併的發音字串 |
-| `batch_g2p(texts, dialect, type, ...)` | 批次處理多個文字 |
-| `normalize(text, use_variant_map, include_english)` | 文本正規化 |
-| `apply_variant_map(text)` | 套用異體字轉換 |
+| Function | Description |
+|----------|-------------|
+| `g2p(text, dialect, type, ...)` | Full G2P conversion, returns G2PResult |
+| `g2p_simple(text, dialect, type, ...)` | Simplified version, returns pronunciation list only |
+| `g2p_string(text, dialect, type, ...)` | Returns concatenated pronunciation string |
+| `batch_g2p(texts, dialect, type, ...)` | Batch process multiple texts |
+| `normalize(text, use_variant_map, include_english)` | Text normalization |
+| `apply_variant_map(text)` | Apply variant character conversion |
 
-### G2PResult 物件
+### G2PResult Object
 
-| 屬性 | 類型 | 說明 |
-|------|------|------|
-| `pronunciations` | `list[str]` | 發音序列 |
-| `unknown_words` | `list[str]` | 未知詞彙列表 |
-| `details` | `list[dict]` | 詳細的詞彙與發音對應 |
-| `has_unknown` | `bool` | 是否有未知詞彙 |
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `pronunciations` | `list[str]` | Pronunciation sequence |
+| `unknown_words` | `list[str]` | List of unknown words |
+| `details` | `list[dict]` | Detailed word-pronunciation mapping |
+| `has_unknown` | `bool` | Whether unknown words exist |
 
-### 斷詞功能
+### Tokenization Functions
 
-| 函數 | 說明 |
-|------|------|
-| `run_jieba(text, dialect, include_english)` | 使用指定腔調斷詞 |
-| `run_jieba_all_dialects(text, include_english)` | 使用所有腔調斷詞 |
+| Function | Description |
+|----------|-------------|
+| `run_jieba(text, dialect, include_english)` | Tokenize with specific dialect |
+| `run_jieba_all_dialects(text, include_english)` | Tokenize with all dialects |
 
-### 發音查詢
+### Pronunciation Lookup
 
-| 函數 | 說明 |
-|------|------|
-| `get_pronunciation(word, dialect, type)` | 查詢單一詞彙發音 |
-| `get_pronunciation_all_dialects(word, type)` | 查詢所有腔調發音 |
-| `segment_with_pronunciation(text, dialect, type, include_english)` | 斷詞並附帶發音 |
-| `text_to_pronunciation(text, dialect, type, ...)` | 文本轉發音字串 |
+| Function | Description |
+|----------|-------------|
+| `get_pronunciation(word, dialect, type)` | Query single word pronunciation |
+| `get_pronunciation_all_dialects(word, type)` | Query pronunciation across all dialects |
+| `segment_with_pronunciation(text, dialect, type, include_english)` | Tokenize with pronunciation |
+| `text_to_pronunciation(text, dialect, type, ...)` | Convert text to pronunciation string |
 
-### 英文功能
+### English Functions
 
-| 函數 | 說明 |
-|------|------|
-| `get_english_pronunciation(word)` | 查詢英文發音 |
-| `english_word_exists(word)` | 檢查英文詞彙是否存在 |
-| `get_english_lexicon_stats()` | 英文詞典統計 |
+| Function | Description |
+|----------|-------------|
+| `get_english_pronunciation(word)` | Query English pronunciation |
+| `english_word_exists(word)` | Check if English word exists |
+| `get_english_lexicon_stats()` | English dictionary statistics |
 
-### 詞彙檢查
+### Vocabulary Check
 
-| 函數 | 說明 |
-|------|------|
-| `word_exists(word, dialect)` | 檢查詞彙是否存在 |
-| `word_exists_in_dialects(word)` | 檢查詞彙在各腔調是否存在 |
-| `find_unknown_words(text, dialect, include_english)` | 找出未知詞彙 |
+| Function | Description |
+|----------|-------------|
+| `word_exists(word, dialect)` | Check if word exists |
+| `word_exists_in_dialects(word)` | Check word existence across all dialects |
+| `find_unknown_words(text, dialect, include_english)` | Find unknown words |
 
-### 腔調比較
+### Dialect Comparison
 
-| 函數 | 說明 |
-|------|------|
-| `compare_dialects(word)` | 比較詞彙在各腔調的發音 |
-| `find_common_words(*dialects)` | 找出多個腔調共有詞彙 |
-| `find_unique_words(dialect)` | 找出某腔調獨有詞彙 |
+| Function | Description |
+|----------|-------------|
+| `compare_dialects(word)` | Compare word pronunciation across dialects |
+| `find_common_words(*dialects)` | Find words common to multiple dialects |
+| `find_unique_words(dialect)` | Find words unique to a dialect |
 
-### 統計與快取
+### Statistics and Cache
 
-| 函數 | 說明 |
-|------|------|
-| `get_lexicon_stats(dialect)` | 取得字典統計 |
-| `get_all_lexicon_stats()` | 取得所有腔調統計 |
-| `get_cached_tokenizers()` | 取得已快取的 Tokenizer 列表 |
-| `clear_tokenizer_cache()` | 清除 Tokenizer 快取 |
+| Function | Description |
+|----------|-------------|
+| `get_lexicon_stats(dialect)` | Get dictionary statistics |
+| `get_all_lexicon_stats()` | Get all dialect statistics |
+| `get_cached_tokenizers()` | Get list of cached tokenizers |
+| `clear_tokenizer_cache()` | Clear tokenizer cache |
 
-## 專案結構
+## Project Structure
 
 ```
-FormoG2P/
+formospeech-g2p/
 ├── pyproject.toml
 ├── README.md
+├── README_zh-TW.md
 ├── hakka/
 │   ├── __init__.py
-│   ├── word_segment.py    # 斷詞模組
-│   ├── g2p.py             # G2P 模組
+│   ├── word_segment.py    # Tokenization module
+│   ├── g2p.py             # G2P module
 │   ├── lexicon/
-│   │   ├── ipa/           # IPA 發音詞典
-│   │   └── pinyin/        # 拼音詞典
+│   │   ├── ipa/           # IPA pronunciation dictionaries
+│   │   └── pinyin/        # Pinyin dictionaries
 │   └── share/
-│       └── variant_map.json  # 異體字對照表
+│       └── variant_map.json  # Variant character mapping
 └── english/
-    ├── lexicon_cmu.json      # CMU 英文發音詞典
-    └── lexicon_sinica.json   # 中研院英文發音詞典
+    ├── lexicon_cmu.json      # CMU English pronunciation dictionary
+    └── lexicon_sinica.json   # Academia Sinica English pronunciation dictionary
 ```
 
-## 授權
+## License
 
 MIT License
