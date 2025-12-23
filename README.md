@@ -15,12 +15,12 @@ Grapheme-to-Phoneme (G2P) Toolkit for Formosan Languages
 
 ### Supported Hakka Dialects
 
-- Sixian (四縣)
-- Southern Sixian (南四縣)
-- Hailu (海陸)
-- Dapu (大埔)
-- Raoping (饒平)
-- Zhao'an (詔安)
+- 客語_四縣 (Sixian)
+- 客語_南四縣 (Nan-Sixian)
+- 客語_海陸 (Hailu)
+- 客語_大埔 (Dapu)
+- 客語_饒平 (Raoping)
+- 客語_詔安 (Zhaoan)
 
 ## Installation
 
