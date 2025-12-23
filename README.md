@@ -1,6 +1,6 @@
 # FormoSpeech G2P
 
-Grapheme-to-Phoneme (G2P) Toolkit for Formosan Languages
+Grapheme-to-Phoneme (G2P) Toolkit for Taiwanese Languages
 
 [繁體中文](README_zh-TW.md)
 
