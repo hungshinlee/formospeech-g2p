@@ -1,12 +1,19 @@
 """
-客語模組 (Hakka Module)
+FormoG2P - 台灣本土語言 G2P 模組
 
 提供客語斷詞、發音查詢、G2P 轉換功能。
 """
 
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("formog2p")
+except PackageNotFoundError:
+    __version__ = "0.0.0.dev"
+
 from .g2p import (
-    G2PResult,
     PUNCTUATIONS,
+    G2PResult,
     apply_variant_map,
     batch_g2p,
     g2p,
@@ -38,6 +45,8 @@ from .word_segment import (
 )
 
 __all__ = [
+    # 版本
+    "__version__",
     # 常數
     "DIALECTS",
     "PUNCTUATIONS",

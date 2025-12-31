@@ -24,18 +24,38 @@
 
 ## 安裝
 
+### 從 PyPI 安裝
+
 ```bash
-# 使用 uv
-uv sync
+pip install formog2p
+```
+
+### 從 Github 安裝
+
+```bash
+pip install git+https://github.com/hungshinlee/formospeech-g2p.git
+```
+
+### 開發環境安裝
+
+```bash
+git clone https://github.com/hungshinlee/formospeech-g2p.git
+cd formospeech-g2p
+
+# 使用 uv（推薦）
+uv sync --all-extras
 
 # 或使用 pip
-pip install -e .
+pip install -e ".[dev]"
+
+# 安裝 pre-commit hooks（選用）
+pre-commit install
 ```
 
 ## 快速開始
 
 ```python
-from hakka import g2p
+from formog2p import g2p
 
 # 基本 G2P 轉換
 result = g2p("天公落水", "客語_四縣", "ipa")
@@ -52,7 +72,7 @@ if result.has_unknown:
 ### G2P 轉換
 
 ```python
-from hakka import g2p, g2p_simple, g2p_string, batch_g2p
+from formog2p import g2p, g2p_simple, g2p_string, batch_g2p
 
 # 完整 G2P（回傳 G2PResult 物件）
 result = g2p("天公落水，好靚！", "客語_四縣", "ipa")
@@ -90,7 +110,7 @@ result = g2p(
 ### 中英混合 G2P
 
 ```python
-from hakka import g2p
+from formog2p import g2p
 
 # 啟用英文發音（僅支援 IPA）
 result = g2p("天公落水Hello World", "客語_四縣", "ipa", include_english=True)
@@ -106,7 +126,7 @@ print(result.unknown_words)
 ### 文本正規化
 
 ```python
-from hakka import normalize, apply_variant_map
+from formog2p import normalize, apply_variant_map
 
 # 完整正規化（包含異體字轉換）
 normalize("天公落水!")           # '天公落水！'（半形轉全形）
@@ -138,7 +158,7 @@ print(result.pronunciations)
 ### 基本斷詞
 
 ```python
-from hakka import run_jieba, run_jieba_all_dialects
+from formog2p import run_jieba, run_jieba_all_dialects
 
 # 使用指定腔調斷詞
 words = run_jieba("天公落水", "客語_四縣")
@@ -155,7 +175,7 @@ results = run_jieba_all_dialects("天公落水")
 ### 發音查詢
 
 ```python
-from hakka import get_pronunciation, get_pronunciation_all_dialects
+from formog2p import get_pronunciation, get_pronunciation_all_dialects
 
 # 查詢單一詞彙發音
 pron = get_pronunciation("天公", "客語_四縣", "ipa")
@@ -168,7 +188,7 @@ all_prons = get_pronunciation_all_dialects("天公", "ipa")
 ### 英文發音查詢
 
 ```python
-from hakka import get_english_pronunciation, english_word_exists, get_english_lexicon_stats
+from formog2p import get_english_pronunciation, english_word_exists, get_english_lexicon_stats
 
 # 查詢英文發音（會自動轉大寫）
 get_english_pronunciation("hello")
@@ -185,7 +205,7 @@ get_english_lexicon_stats()
 ### 詞彙檢查
 
 ```python
-from hakka import word_exists, find_unknown_words
+from formog2p import word_exists, find_unknown_words
 
 # 檢查詞彙是否存在
 word_exists("天公", "客語_四縣")  # True
@@ -202,7 +222,7 @@ unknown = find_unknown_words("天公落水ABC", "客語_四縣", include_english
 ### 腔調比較
 
 ```python
-from hakka import compare_dialects, find_common_words, find_unique_words
+from formog2p import compare_dialects, find_common_words, find_unique_words
 
 # 比較同一詞彙在不同腔調的發音
 comparison = compare_dialects("天公")
@@ -218,7 +238,7 @@ unique = find_unique_words("客語_四縣")
 ### 字典統計
 
 ```python
-from hakka import get_lexicon_stats, get_all_lexicon_stats
+from formog2p import get_lexicon_stats, get_all_lexicon_stats
 
 # 單一腔調統計
 stats = get_lexicon_stats("客語_四縣")
@@ -233,7 +253,7 @@ all_stats = get_all_lexicon_stats()
 Tokenizer 會在第一次呼叫時載入並快取，之後的呼叫不會重複載入：
 
 ```python
-from hakka import get_cached_tokenizers, clear_tokenizer_cache
+from formog2p import get_cached_tokenizers, clear_tokenizer_cache
 
 # 查看已快取的 Tokenizer
 get_cached_tokenizers()
@@ -333,18 +353,19 @@ formospeech-g2p/
 ├── pyproject.toml
 ├── README.md
 ├── README_zh-TW.md
-├── hakka/
+├── LICENSE
+├── CHANGELOG.md
+├── formog2p/
 │   ├── __init__.py
 │   ├── word_segment.py    # 斷詞模組
 │   ├── g2p.py             # G2P 模組
-│   ├── lexicon/
-│   │   ├── ipa/           # IPA 發音詞典
-│   │   └── pinyin/        # 拼音詞典
-│   └── share/
-│       └── variant_map.json  # 異體字對照表
-└── english/
-    ├── lexicon_cmu.json      # CMU 英文發音詞典
-    └── lexicon_sinica.json   # 中研院英文發音詞典
+│   ├── py.typed           # 型別提示標記
+│   └── data/
+│       ├── hakka/
+│       │   ├── lexicon/   # 客語發音詞典
+│       │   └── share/     # 異體字對照表
+│       └── english/       # 英文發音詞典
+└── tests/                 # 測試
 ```
 
 ## 授權
