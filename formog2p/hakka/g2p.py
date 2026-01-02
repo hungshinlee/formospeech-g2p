@@ -28,7 +28,7 @@ from .word_segment import (
 
 # 模組路徑
 MODULE_DIR = Path(__file__).parent
-DATA_DIR = MODULE_DIR / "data"
+DATA_DIR = MODULE_DIR.parent / "data"
 SHARE_DIR = DATA_DIR / "hakka" / "share"
 
 # 標點符號（視為 known token）

@@ -1,6 +1,6 @@
 """斷詞功能測試"""
 
-from formog2p import (
+from formog2p.hakka import (
     DIALECTS,
     english_word_exists,
     find_unknown_words,

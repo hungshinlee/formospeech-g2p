@@ -1,6 +1,6 @@
 """G2P 功能測試"""
 
-from formog2p import (
+from formog2p.hakka import (
     G2PResult,
     apply_variant_map,
     g2p,
@@ -61,7 +61,7 @@ class TestG2P:
 
     def test_g2p_all_dialects(self):
         """測試所有腔調"""
-        from formog2p import DIALECTS
+        from formog2p.hakka import DIALECTS
 
         for dialect in DIALECTS:
             result = g2p("天公", dialect, "ipa")

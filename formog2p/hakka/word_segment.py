@@ -50,7 +50,7 @@ jieba.re_han_default = re.compile(
 
 # 模組路徑
 MODULE_DIR = Path(__file__).parent
-DATA_DIR = MODULE_DIR / "data"
+DATA_DIR = MODULE_DIR.parent / "data"
 LEXICON_DIR = DATA_DIR / "hakka" / "lexicon"
 ENGLISH_DIR = DATA_DIR / "english"
 
