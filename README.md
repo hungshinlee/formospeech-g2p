@@ -24,18 +24,38 @@ Grapheme-to-Phoneme (G2P) Toolkit for Taiwanese Languages
 
 ## Installation
 
+### From PyPI
+
 ```bash
-# Using uv
-uv sync
+pip install formog2p
+```
+
+### From Github
+
+```bash
+pip install git+https://github.com/hungshinlee/formospeech-g2p.git
+```
+
+### Development Installation
+
+```bash
+git clone https://github.com/hungshinlee/formospeech-g2p.git
+cd formospeech-g2p
+
+# Using uv (recommended)
+uv sync --all-extras
 
 # Or using pip
-pip install -e .
+pip install -e ".[dev]"
+
+# Install pre-commit hooks (optional)
+pre-commit install
 ```
 
 ## Quick Start
 
 ```python
-from hakka import g2p
+from formog2p.hakka import g2p
 
 # Basic G2P conversion
 result = g2p("天公落水", "客語_四縣", "ipa")
@@ -52,7 +72,7 @@ if result.has_unknown:
 ### G2P Conversion
 
 ```python
-from hakka import g2p, g2p_simple, g2p_string, batch_g2p
+from formog2p.hakka import g2p, g2p_simple, g2p_string, batch_g2p
 
 # Full G2P (returns G2PResult object)
 result = g2p("天公落水，好靚！", "客語_四縣", "ipa")
@@ -90,7 +110,7 @@ result = g2p(
 ### Mixed Chinese-English G2P
 
 ```python
-from hakka import g2p
+from formog2p.hakka import g2p
 
 # Enable English pronunciation (IPA only)
 result = g2p("天公落水Hello World", "客語_四縣", "ipa", include_english=True)
@@ -106,7 +126,7 @@ print(result.unknown_words)
 ### Text Normalization
 
 ```python
-from hakka import normalize, apply_variant_map
+from formog2p.hakka import normalize, apply_variant_map
 
 # Full normalization (including variant character conversion)
 normalize("天公落水!")           # '天公落水！' (half-width to full-width)
@@ -138,7 +158,7 @@ print(result.pronunciations)
 ### Basic Tokenization
 
 ```python
-from hakka import run_jieba, run_jieba_all_dialects
+from formog2p.hakka import run_jieba, run_jieba_all_dialects
 
 # Tokenize with specific dialect
 words = run_jieba("天公落水", "客語_四縣")
@@ -155,7 +175,7 @@ results = run_jieba_all_dialects("天公落水")
 ### Pronunciation Lookup
 
 ```python
-from hakka import get_pronunciation, get_pronunciation_all_dialects
+from formog2p.hakka import get_pronunciation, get_pronunciation_all_dialects
 
 # Query pronunciation for a single word
 pron = get_pronunciation("天公", "客語_四縣", "ipa")
@@ -168,7 +188,7 @@ all_prons = get_pronunciation_all_dialects("天公", "ipa")
 ### English Pronunciation Lookup
 
 ```python
-from hakka import get_english_pronunciation, english_word_exists, get_english_lexicon_stats
+from formog2p.hakka import get_english_pronunciation, english_word_exists, get_english_lexicon_stats
 
 # Query English pronunciation (auto-converts to uppercase)
 get_english_pronunciation("hello")
@@ -185,7 +205,7 @@ get_english_lexicon_stats()
 ### Vocabulary Check
 
 ```python
-from hakka import word_exists, find_unknown_words
+from formog2p.hakka import word_exists, find_unknown_words
 
 # Check if word exists
 word_exists("天公", "客語_四縣")  # True
@@ -202,7 +222,7 @@ unknown = find_unknown_words("天公落水ABC", "客語_四縣", include_english
 ### Dialect Comparison
 
 ```python
-from hakka import compare_dialects, find_common_words, find_unique_words
+from formog2p.hakka import compare_dialects, find_common_words, find_unique_words
 
 # Compare pronunciation of the same word across dialects
 comparison = compare_dialects("天公")
@@ -218,7 +238,7 @@ unique = find_unique_words("客語_四縣")
 ### Dictionary Statistics
 
 ```python
-from hakka import get_lexicon_stats, get_all_lexicon_stats
+from formog2p.hakka import get_lexicon_stats, get_all_lexicon_stats
 
 # Single dialect statistics
 stats = get_lexicon_stats("客語_四縣")
@@ -233,7 +253,7 @@ all_stats = get_all_lexicon_stats()
 Tokenizers are loaded and cached on first invocation; subsequent calls retrieve from cache:
 
 ```python
-from hakka import get_cached_tokenizers, clear_tokenizer_cache
+from formog2p.hakka import get_cached_tokenizers, clear_tokenizer_cache
 
 # View cached tokenizers
 get_cached_tokenizers()

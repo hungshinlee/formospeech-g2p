@@ -1,12 +1,23 @@
 [project]
 name = "formog2p"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Formosan Languages Grapheme-to-Phoneme (G2P) Toolkit - 台灣本土語言文字轉音素工具"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "HS" }]
 keywords = ["hakka", "taiwanese", "g2p", "nlp", "tokenization", "客語", "台灣"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Linguistic",
+    "Natural Language :: Chinese (Traditional)",
+]
 
 dependencies = [
     "jieba>=0.42.1",
@@ -16,21 +27,24 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.4.0",
+    "pre-commit>=4.0.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/hungshinlee/formospeech-g2p"
+Repository = "https://github.com/hungshinlee/formospeech-g2p"
+Issues = "https://github.com/hungshinlee/formospeech-g2p/issues"
+Changelog = "https://github.com/hungshinlee/formospeech-g2p/blob/main/CHANGELOG.md"
+
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
+[tool.hatch.version]
+source = "vcs"
+
 [tool.hatch.build.targets.wheel]
-packages = ["hakka"]
-
-[tool.hatch.build.targets.wheel.sources]
-"hakka" = "hakka"
-
-[tool.hatch.build.targets.wheel.force-include]
-"hakka/lexicon" = "hakka/lexicon"
-"hakka/share" = "hakka/share"
+packages = ["formog2p"]
 
 [tool.ruff]
 line-length = 88

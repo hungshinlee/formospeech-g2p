@@ -5,8 +5,8 @@
 """
 
 from .g2p import (
-    G2PResult,
     PUNCTUATIONS,
+    G2PResult,
     apply_variant_map,
     batch_g2p,
     g2p,

@@ -16,7 +16,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Literal
 
 import jieba
 
@@ -37,21 +37,22 @@ import jieba
 # =============================================================================
 jieba.re_han_default = re.compile(
     r"(["
-    r"\u2e80-\u9fff"           # CJK 基本區域
-    r"\uf900-\ufaff"           # CJK 相容漢字
-    r"\U00020000-\U000323af"   # CJK 擴展 B ~ H
-    r"\ue000-\uf8ff"           # 私用區
-    r"\U000f0000-\U0010fffd"   # 私用區補充 A & B
-    r"a-zA-Z0-9"               # 英文字母、數字
-    r"+#&\.\_%\-'"             # 常見符號
+    r"\u2e80-\u9fff"  # CJK 基本區域
+    r"\uf900-\ufaff"  # CJK 相容漢字
+    r"\U00020000-\U000323af"  # CJK 擴展 B ~ H
+    r"\ue000-\uf8ff"  # 私用區
+    r"\U000f0000-\U0010fffd"  # 私用區補充 A & B
+    r"a-zA-Z0-9"  # 英文字母、數字
+    r"+#&\.\_%\-'"  # 常見符號
     r"]+)",
-    re.U
+    re.U,
 )
 
 # 模組路徑
 MODULE_DIR = Path(__file__).parent
-LEXICON_DIR = MODULE_DIR / "lexicon"
-ENGLISH_DIR = MODULE_DIR.parent / "english"
+DATA_DIR = MODULE_DIR.parent / "data"
+LEXICON_DIR = DATA_DIR / "hakka" / "lexicon"
+ENGLISH_DIR = DATA_DIR / "english"
 
 # 支援的腔調列表
 DIALECTS = [
@@ -190,9 +191,7 @@ def _get_tokenizer(dialect: str, include_english: bool = False) -> jieba.Tokeniz
         該腔調專用的 Jieba Tokenizer 實例（從快取取得或新建）
     """
     if dialect not in DIALECTS:
-        raise ValueError(
-            f"不支援的腔調: {dialect}\n支援的腔調: {', '.join(DIALECTS)}"
-        )
+        raise ValueError(f"不支援的腔調: {dialect}\n支援的腔調: {', '.join(DIALECTS)}")
 
     # 使用不同的 key 來區分是否包含英文
     # 這樣 "客語_四縣" 和 "客語_四縣_en" 會分別快取

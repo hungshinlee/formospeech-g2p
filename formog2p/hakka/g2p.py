@@ -4,8 +4,8 @@
 將客語文字轉換為發音序列。
 
 使用方式:
-    from hakka.g2p import g2p
-    
+    from formog2p import g2p
+
     # 基本用法
     result = g2p("天公落水", "客語_四縣", "ipa")
     print(result)  # ['tʰ-ien_24 k-uŋ_24', 'l-ok_5 s-ui_31']
@@ -16,7 +16,6 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
 
 from .word_segment import (
     DIALECTS,
@@ -29,7 +28,8 @@ from .word_segment import (
 
 # 模組路徑
 MODULE_DIR = Path(__file__).parent
-SHARE_DIR = MODULE_DIR / "share"
+DATA_DIR = MODULE_DIR.parent / "data"
+SHARE_DIR = DATA_DIR / "hakka" / "share"
 
 # 標點符號（視為 known token）
 PUNCTUATIONS = {"，", "。", "？", "！"}
