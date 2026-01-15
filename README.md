@@ -15,12 +15,12 @@ Grapheme-to-Phoneme (G2P) Toolkit for Taiwanese Languages
 
 ### Supported Hakka Dialects
 
-- 客語_四縣 (Sixian)
-- 客語_南四縣 (Nan-Sixian)
-- 客語_海陸 (Hailu)
-- 客語_大埔 (Dapu)
-- 客語_饒平 (Raoping)
-- 客語_詔安 (Zhaoan)
+- 客語_四縣（hak_sx）
+- 客語_南四縣（hak_nsx）
+- 客語_海陸（hak_hl）
+- 客語_大埔（hak_dp）
+- 客語_饒平（hak_rp）
+- 客語_詔安（hak_za）
 
 ## Installation
 
@@ -353,18 +353,15 @@ formospeech-g2p/
 ├── pyproject.toml
 ├── README.md
 ├── README_zh-TW.md
-├── hakka/
+├── lexicon/           # Pronunciation dictionaries
+│   ├── ipa/
+│   └── pinyin/
+├── share/             # Shared resources (e.g. variant map)
+├── formog2p/               # Source code
 │   ├── __init__.py
-│   ├── word_segment.py    # Tokenization module
-│   ├── g2p.py             # G2P module
-│   ├── lexicon/
-│   │   ├── ipa/           # IPA pronunciation dictionaries
-│   │   └── pinyin/        # Pinyin dictionaries
-│   └── share/
-│       └── variant_map.json  # Variant character mapping
-└── english/
-    ├── lexicon_cmu.json      # CMU English pronunciation dictionary
-    └── lexicon_sinica.json   # Academia Sinica English pronunciation dictionary
+│   └── hakka/
+│       ├── __init__.py
+│       └── g2p.py     # Main G2P logic
 ```
 
 ## License

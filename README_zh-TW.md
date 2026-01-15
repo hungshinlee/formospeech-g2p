@@ -355,17 +355,16 @@ formospeech-g2p/
 ├── README_zh-TW.md
 ├── LICENSE
 ├── CHANGELOG.md
-├── formog2p/
+├── lexicon/           # 發音詞典
+│   ├── ipa/
+│   └── pinyin/
+├── share/             # 共享資源（如異體字對照表）
+├── formog2p/               # 套件原始碼
 │   ├── __init__.py
-│   ├── word_segment.py    # 斷詞模組
-│   ├── g2p.py             # G2P 模組
-│   ├── py.typed           # 型別提示標記
-│   └── data/
-│       ├── hakka/
-│       │   ├── lexicon/   # 客語發音詞典
-│       │   └── share/     # 異體字對照表
-│       └── english/       # 英文發音詞典
-└── tests/                 # 測試
+│   └── hakka/
+│       ├── __init__.py
+│       └── g2p.py     # 客語 G2P 主要邏輯
+└── tests/             # 測試
 ```
 
 ## 授權

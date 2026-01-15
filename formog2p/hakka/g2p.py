@@ -4,6 +4,7 @@ Apache 2.0
 """
 
 import json
+import logging
 import re
 import unicodedata
 from dataclasses import dataclass, field
@@ -11,6 +12,8 @@ from pathlib import Path
 from typing import Literal, get_args
 
 import jieba
+
+jieba.setLogLevel(logging.ERROR)
 
 jieba.re_han_default = re.compile(
     r"(["
@@ -27,8 +30,8 @@ jieba.re_han_default = re.compile(
 
 # 模組路徑
 MODULE_DIR = Path(__file__).parent
-LEXICON_DIR = MODULE_DIR.parent / "lexicon"
-SHARE_DIR = MODULE_DIR.parent / "share"
+LEXICON_DIR = MODULE_DIR.parent.parent / "lexicon"
+SHARE_DIR = MODULE_DIR.parent.parent / "share"
 
 # 語言類型
 LangGroupType = Literal[
@@ -81,7 +84,7 @@ RE_WHITESPACE = re.compile(r"\s+|\t+")
 
 def _load_lexicon(
     lang_group: LangGroupType, include_eng: bool = False
-) -> dict[str, list[str]]:
+) -> dict[str, dict[str, list[str]]]:
     lexicon = {}
     for pronunciation_type in PRONUNCIATIONS:
         lexicon_path = LEXICON_DIR / pronunciation_type / f"{lang_group}.json"
@@ -113,7 +116,7 @@ def _load_lexicon(
 def _get_lexicon(
     lang_group: str,
     include_eng: bool = False,
-) -> dict[str, list[str]]:
+) -> dict[str, dict[str, list[str]]]:
     if lang_group in _lexicons:
         return _lexicons[lang_group]
 
@@ -155,8 +158,9 @@ def init_tokenizer(
 
 
 def clear_tokenizer_cache() -> None:
-    global _tokenizers
+    global _tokenizers, _lexicons
     _tokenizers = {}
+    _lexicons = {}
 
 
 def get_cached_tokenizers() -> list[str]:
@@ -229,19 +233,6 @@ def text_to_pronunciation(
     for word in words:
         pron = get_pronunciation(word, lang_group)
         if pron:
-            pronunciations.append(pron[0])
-        else:
-            pronunciations.append(unknown_marker)
-
-    return separator.join(pronunciations)
-
-    words, oovs = run_jieba(text, lang_group)
-    pronunciations = []
-
-    for word in words:
-        pron = get_pronunciation(word, lang_group)
-        if pron:
-            # 取第一個發音（若有多個）
             pronunciations.append(pron[0])
         else:
             pronunciations.append(unknown_marker)
@@ -384,6 +375,7 @@ if __name__ == "__main__":
 
     lang_group = "hak_sx"
 
-    init_tokenizer()
-    result = g2p(text, lang_group)
+    clear_tokenizer_cache()
+    init_tokenizer(pronunciation_type="ipa", include_eng=True)
+    result = g2p(text, lang_group, pronunciation_type="ipa", include_eng=True)
     print(result)
