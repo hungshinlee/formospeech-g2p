@@ -172,27 +172,29 @@ def run_jieba(
     lang_group: LangGroupType = "hak_sx",
     pronunciation_type: PronunciationType = "ipa",
     return_oovs: bool = True,
+    include_eng: bool = False,
 ) -> tuple[list[str], list[str]]:
+    # 自動初始化 Tokenizer
     if lang_group not in _tokenizers:
-        raise ValueError(
-            f"Tokenizer for '{lang_group}' not initialized. "
-            f"Call init_tokenizer('{lang_group}') first."
-        )
+        _get_tokenizer(lang_group, pronunciation_type, include_eng)
 
-    tokenizer = _get_tokenizer(lang_group)
+    tokenizer = _get_tokenizer(
+        lang_group, pronunciation_type=pronunciation_type, include_eng=include_eng
+    )
     result = list(tokenizer.cut(text, HMM=False))
     result = [x for x in result if x.strip()]
     oovs = []
 
     if return_oovs:
-        lexicon = _lexicons[lang_group][pronunciation_type]
-
-        for word in result:
-            if word in MARKERS:
-                continue
-
-            if word not in lexicon:
-                oovs.append(word)
+        # 確保 lexicon 已載入
+        lexicon = _get_lexicon(lang_group, include_eng)
+        if pronunciation_type in lexicon:
+            lexical_dict = lexicon[pronunciation_type]
+            for word in result:
+                if word in MARKERS:
+                    continue
+                if word not in lexical_dict:
+                    oovs.append(word)
 
     return result, oovs
 
@@ -206,17 +208,19 @@ def get_pronunciation(
     word: str,
     lang_group: LangGroupType = "hak_sx",
     pronunciation_type: PronunciationType = "ipa",
+    include_eng: bool = False,
 ) -> list[str] | None:
-    return _lexicons[lang_group][pronunciation_type].get(word, None)
+    lexicon = _get_lexicon(lang_group, include_eng)
+    return lexicon[pronunciation_type].get(word, None)
 
 
 def segment_with_pronunciation(
-    text: str, lang_group: LangGroupType = "hak_sx"
+    text: str, lang_group: LangGroupType = "hak_sx", include_eng: bool = False
 ) -> list[dict[str, str | list[str] | None]]:
-    words, oovs = run_jieba(text, lang_group, return_oovs=True)
+    words, oovs = run_jieba(text, lang_group, return_oovs=True, include_eng=include_eng)
     results = []
     for word in words:
-        pron = get_pronunciation(word, lang_group)
+        pron = get_pronunciation(word, lang_group, include_eng=include_eng)
         results.append({"word": word, "pronunciation": pron})
     return results
 
@@ -226,12 +230,13 @@ def text_to_pronunciation(
     lang_group: LangGroupType = "hak_sx",
     separator: str = " ",
     unknown_marker: str = "?",
+    include_eng: bool = False,
 ) -> str:
-    words, oovs = run_jieba(text, lang_group)
+    words, oovs = run_jieba(text, lang_group, include_eng=include_eng)
     pronunciations = []
 
     for word in words:
-        pron = get_pronunciation(word, lang_group)
+        pron = get_pronunciation(word, lang_group, include_eng=include_eng)
         if pron:
             pronunciations.append(pron[0])
         else:
@@ -325,7 +330,11 @@ def g2p(
 
     # 2. 斷詞
     words, oovs = run_jieba(
-        normalized_text, lang_group, pronunciation_type, return_oovs=True
+        normalized_text,
+        lang_group,
+        pronunciation_type,
+        return_oovs=True,
+        include_eng=include_eng,
     )
 
     # 3. 載入詞典
